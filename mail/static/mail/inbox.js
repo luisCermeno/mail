@@ -150,23 +150,21 @@ function load_email(id){
     const user = JSON.parse(document.getElementById('user').textContent);
     if (user != email.sender) {
       if (email.read) {
-        read_btn.innerHTML = 'Mark as Unread';
         read_btn.value = 'Mark as Unread';
       }
       else {
-        read_btn.innerHTML = 'Mark as Read';
         read_btn.value = 'Mark as Read';
       }
       if (email.archived) {
         console.log(`email is currently archived`);
-        archive_btn.innerHTML = 'Unarchive';
         archive_btn.value = 'Unarchive';
       }
       else {
         console.log(`email is currently unarchived`);
-        archive_btn.innerHTML = 'Archive';
         archive_btn.value = 'Archive';
       }
+      read_btn.innerHTML = read_btn.value;
+      archive_btn.innerHTML =  archive_btn.value;
     }
     else {
       read_btn.style.display='none'
@@ -177,23 +175,22 @@ function load_email(id){
   .then( () => {
     document.querySelectorAll('.opt-btn').forEach(button => {
       button.onclick = () => {
-        markEmail(id, button.value);
-        load_email(id)
+        markEmail(id, button);
       }
     })
   })
 }
 
-function markEmail(id, opt){
-  console.log(`Fuction passed with values for id = ${id}, opt = ${opt}`)
-  switch (opt) {
+function markEmail(id, button){
+  switch (button.value) {
     case 'Mark as Unread':
       fetch(`/emails/${id}`, {
         method: 'PUT',
         body: JSON.stringify({
           read: false
         })
-      })
+      });
+      button.value = 'Mark as Read'
       break;
     case 'Mark as Read':
       fetch(`/emails/${id}`, {
@@ -201,7 +198,8 @@ function markEmail(id, opt){
         body: JSON.stringify({
           read: true
         })
-      })
+      });
+      button.value = 'Mark as Unread'
       break;
     case 'Unarchive':
       fetch(`/emails/${id}`, {
@@ -209,7 +207,8 @@ function markEmail(id, opt){
         body: JSON.stringify({
           archived: false
         })
-      })
+      });
+      button.value = 'Archive'
       break;
     case 'Archive':
       fetch(`/emails/${id}`, {
@@ -217,7 +216,10 @@ function markEmail(id, opt){
         body: JSON.stringify({
           archived: true
         })
-      })
+      });
+      button.value = 'Unarchive'
       break;
   }
+  // Change the html of the button
+  button.innerHTML = button.value
 }
