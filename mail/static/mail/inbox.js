@@ -60,16 +60,33 @@ function load_mailbox(mailbox) {
     fetch('/emails/inbox')
     .then(response => response.json())
     .then(emails => {
-        array = emails
-        console.log(emails)
-        // For each email create a div
-        for (mail in emails) {
-          const mail_div = document.createElement('div');
-          // fix undefined here
-          mail_div.innerHTML = JSON.stringify(mail);
-          console.log(mail['sender'])
-          document.querySelector('#emails-view').append(mail_div);
+      // For each email create a row div
+      for (i = 0; i < emails.length; i++) {
+        const mail_div = document.createElement('div');
+        if (emails[i].read) {
+          mail_div.className = 'mail-div row read d-flex align-items-center'
         }
-    });
+        else {
+          mail_div.className = 'mail-div row unread'
+        }
+        //Create colums inside that div
+        const col_sender = document.createElement('div');
+        col_sender.className = 'col-md-4 d-flex align-items-center'
+        col_sender.innerHTML = emails[i].sender;
+        mail_div.append(col_sender);
+
+        const col_subject = document.createElement('div');
+        col_subject.className = 'col-md-4 d-flex align-items-center'
+        col_subject.innerHTML = emails[i].subject;
+        mail_div.append(col_subject);
+
+        const col_timestamp = document.createElement('div');
+        col_timestamp.className = 'col-md-4 d-flex align-items-center justify-content-end'
+        col_timestamp.innerHTML = emails[i].timestamp;
+        mail_div.append(col_timestamp);
+        //Append div to parent div
+        document.querySelector('#emails-view').append(mail_div);
+      }
+    })
   }
 }

@@ -1,3 +1,16 @@
 textarea {
     min-height: 400px;
 }
+
+/* mail div */
+.mail-div{
+    border: solid 1px;
+    border-color: gray;
+    height: 35px;
+}
+.read {
+    background-color: gray;
+}
+.unread {
+    background-color: white;
+}
