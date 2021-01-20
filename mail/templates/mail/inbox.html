@@ -11,7 +11,7 @@
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
     <hr>
 
-    <div id="emails-view">
+    <div id="mailbox-view">
     </div>
 
     <div id="compose-view">
@@ -30,8 +30,21 @@
             <input type="submit" class="btn btn-primary"/>
         </form>
     </div>
+
+    <div id="email-view" class="row">
+        <div class="col-12" id = email-title></div>
+        <div class="col-12" id="email-options">
+            <button class="opt-btn" id="archive-btn"></button>
+            <button class="opt-btn" id="read-btn"></button>
+        </div>
+        <div class="col-12" id = "email-sender"></div>
+        <div class="col-12" id = email-recipients></div>
+        <div class="col-12" id = email-timestamp></div>
+        <div class="col-12" id = email-body></div>
+    </div>
 {% endblock %}
 
 {% block script %}
+    {{ request.user.email|json_script:"user" }}
     <script src="{% static 'mail/inbox.js' %}"></script>
 {% endblock %}

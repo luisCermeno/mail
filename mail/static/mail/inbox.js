@@ -13,11 +13,12 @@ document.addEventListener('DOMContentLoaded', function() {
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
-  document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector('#mailbox-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
 
   // Show the mailbox name
-  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+  document.querySelector('#mailbox-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
   // Inbox functionality
   //Fetch from API
@@ -30,7 +31,7 @@ function load_mailbox(mailbox) {
     const wrapper = document.createElement('div');
     wrapper.id = 'wrapper';
     wrapper.className = 'row';
-    document.querySelector('#emails-view').append(wrapper);
+    document.querySelector('#mailbox-view').append(wrapper);
     // Traverse the json object gotten from the response
     for (i = 0; i < emails.length; i++) {
       //For each email create a col div
@@ -79,7 +80,7 @@ function load_mailbox(mailbox) {
   .then( () => {
     document.querySelectorAll('.mail-div').forEach(div => {
       div.onclick = () => {
-        console.log(div.dataset.id)
+        load_email(div.dataset.id)
       }
     })
   })
@@ -88,8 +89,9 @@ function load_mailbox(mailbox) {
 function compose_email() {
 
   // Show compose view and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#mailbox-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#email-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -124,3 +126,98 @@ function compose_email() {
   }
 }
 
+function load_email(id){
+  console.log(`Loading email with id ${id}`)
+  // Show the mailbox and hide other views
+  document.querySelector('#mailbox-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'block';
+
+  //Fetch from API
+  fetch(`/emails/${id}`)
+  //Then, get the response and convert it to jason
+  .then(response => response.json())
+  //Then, build html with data
+  .then(email => {
+    console.log(email);
+    document.querySelector('#email-title').innerHTML = `<h3>${email.subject}</h3>`;
+    document.querySelector('#email-sender').innerHTML = `From: ${email.recipients}`;
+    document.querySelector('#email-recipients').innerHTML = `To: ${email.recipients}`;
+    document.querySelector('#email-timestamp').innerHTML = email.timestamp;
+    document.querySelector('#email-body').innerHTML = email.body;
+    archive_btn = document.querySelector('#archive-btn');
+    read_btn = document.querySelector('#read-btn');
+    const user = JSON.parse(document.getElementById('user').textContent);
+    if (user != email.sender) {
+      if (email.read) {
+        read_btn.innerHTML = 'Mark as Unread';
+        read_btn.value = 'Mark as Unread';
+      }
+      else {
+        read_btn.innerHTML = 'Mark as Read';
+        read_btn.value = 'Mark as Read';
+      }
+      if (email.archived) {
+        console.log(`email is currently archived`);
+        archive_btn.innerHTML = 'Unarchive';
+        archive_btn.value = 'Unarchive';
+      }
+      else {
+        console.log(`email is currently unarchived`);
+        archive_btn.innerHTML = 'Archive';
+        archive_btn.value = 'Archive';
+      }
+    }
+    else {
+      read_btn.style.display='none'
+      archive_btn.style.display='none'
+    }
+  })
+  // Then, listen for a click on each button
+  .then( () => {
+    document.querySelectorAll('.opt-btn').forEach(button => {
+      button.onclick = () => {
+        markEmail(id, button.value);
+        load_email(id)
+      }
+    })
+  })
+}
+
+function markEmail(id, opt){
+  console.log(`Fuction passed with values for id = ${id}, opt = ${opt}`)
+  switch (opt) {
+    case 'Mark as Unread':
+      fetch(`/emails/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          read: false
+        })
+      })
+      break;
+    case 'Mark as Read':
+      fetch(`/emails/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          read: true
+        })
+      })
+      break;
+    case 'Unarchive':
+      fetch(`/emails/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          archived: false
+        })
+      })
+      break;
+    case 'Archive':
+      fetch(`/emails/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          archived: true
+        })
+      })
+      break;
+  }
+}
