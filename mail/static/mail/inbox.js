@@ -10,41 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
-function compose_email() {
-
-  // Show compose view and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
-
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
-
-  // Listen for form submission
-  document.querySelector('#compose-form').onsubmit = function (){
-    // Get field values from the form
-    const recipients = document.querySelector('#compose-recipients').value;
-    const subject =  document.querySelector('#compose-subject').value;
-    const body = document.querySelector('#compose-body').value;
-
-    // Send POST request to server
-    fetch('/emails', {
-        method: 'POST',
-        body: JSON.stringify({
-            recipients: recipients,
-            subject: subject,
-            body: body
-        })
-      })
-      .then(response => response.json())
-      .then(result => {
-          // Print result
-          console.log(result);
-      });
-  }
-}
-
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
@@ -102,3 +67,43 @@ function load_mailbox(mailbox) {
     }
   })
 }
+
+function compose_email() {
+
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
+  // Clear out composition fields
+  document.querySelector('#compose-recipients').value = '';
+  document.querySelector('#compose-subject').value = '';
+  document.querySelector('#compose-body').value = '';
+
+  // Listen for form submission
+  document.querySelector('#compose-form').onsubmit = function (){
+    // Get field values from the form
+    const recipients = document.querySelector('#compose-recipients').value;
+    const subject =  document.querySelector('#compose-subject').value;
+    const body = document.querySelector('#compose-body').value;
+
+    // Send POST request to server
+    fetch('/emails', {
+        method: 'POST',
+        body: JSON.stringify({
+            recipients: recipients,
+            subject: subject,
+            body: body
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+          // Print result
+          console.log(result);
+      });
+    // Load inbox again
+    load_mailbox('inbox');
+    // Stop form from submitting
+    return false;
+  }
+}
+
