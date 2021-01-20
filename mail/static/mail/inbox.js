@@ -19,39 +19,48 @@ function load_mailbox(mailbox) {
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
-  // Show inbox
-  //Get emails from API
+  // Inbox functionality
+  //Fetch from API
   fetch(`/emails/${mailbox}`)
+  //Then, get the response and convert it to jason
   .then(response => response.json())
+  //Then, build html with data
   .then(emails => {
-    // For each email create a row div
+    //Create a row wrapper for all emails
+    const wrapper = document.createElement('div');
+    wrapper.id = 'wrapper';
+    wrapper.className = 'row';
+    document.querySelector('#emails-view').append(wrapper);
+    // Traverse the json object gotten from the response
     for (i = 0; i < emails.length; i++) {
+      //For each email create a col div
       const mail_div = document.createElement('div');
+      mail_div.dataset.id = emails[i].id;
       if (mailbox == 'sent'){
-        // Set a class to the row
-        mail_div.className = 'mail-div row unread d-flex align-items-center'
-        //Create colum inside that div for recipient
+        // Set a class to the col
+        mail_div.className = 'mail-div col-12 unread d-flex align-items-center'
+        //Create subcolum for recipient
         const col_recipient = document.createElement('div');
         col_recipient.className = 'col-md-4 d-flex align-items-center'
         col_recipient.innerHTML = `To : ${emails[i].recipients}`;
         mail_div.append(col_recipient);
       }
       else{
-        // Set a class to the row
+        // Set a class to the col
         if (emails[i].read) {
-          mail_div.className = 'mail-div row read d-flex align-items-center'
+          mail_div.className = 'mail-div col-12 read d-flex align-items-center'
         }
         else {
-          mail_div.className = 'mail-div row unread d-flex align-items-center'
+          mail_div.className = 'mail-div col-12 unread d-flex align-items-center'
         }
-        //Create column inside that div for sender
+        //Create subcolumn for sender
         const col_sender = document.createElement('div');
         col_sender.className = 'col-md-4 d-flex align-items-center'
         col_sender.innerHTML = emails[i].sender;
         mail_div.append(col_sender);
       }
 
-      //Create colums for subject and timestamp
+      //Create subcolums for subject and timestamp
       const col_subject = document.createElement('div');
       col_subject.className = 'col-md-4 d-flex align-items-center'
       col_subject.innerHTML = emails[i].subject;
@@ -60,11 +69,19 @@ function load_mailbox(mailbox) {
       const col_timestamp = document.createElement('div');
       col_timestamp.className = 'col-md-4 d-flex align-items-center justify-content-end'
       col_timestamp.innerHTML = emails[i].timestamp;
-      mail_div.append(col_timestamp);
+      mail_div.append(col_timestamp)
       
       //Append div to parent div
-      document.querySelector('#emails-view').append(mail_div);
+      document.querySelector('#wrapper').append(mail_div);
     }
+  })
+  // Then, listen for a click on each email col
+  .then( () => {
+    document.querySelectorAll('.mail-div').forEach(div => {
+      div.onclick = () => {
+        console.log(div.dataset.id)
+      }
+    })
   })
 }
 
