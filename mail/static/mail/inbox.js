@@ -204,7 +204,6 @@ function markEmail(id, button){
         console.log(response)
       })
       .then ( () => load_mailbox('inbox') )
-      button.value = 'Mark as Read';
       break;
     case 'Mark as Read':
       fetch(`/emails/${id}`, {
@@ -217,7 +216,6 @@ function markEmail(id, button){
         console.log(response)
       })
       .then ( () => load_mailbox('inbox') )
-      button.value = 'Mark as Unread';
       break;
     case 'Unarchive':
       fetch(`/emails/${id}`, {
@@ -230,7 +228,6 @@ function markEmail(id, button){
         console.log(response)
       })
       .then ( () => load_mailbox('inbox') )
-      button.value = 'Archive';
       break;
     case 'Archive':
       fetch(`/emails/${id}`, {
@@ -243,12 +240,6 @@ function markEmail(id, button){
         console.log(response)
       })
       .then ( () => load_mailbox('inbox') )
-      button.value = 'Unarchive';
       break;
   }
-  // Change the html of the button
-  button.innerHTML = button.value
-
-  //Load users inbox
-  
 }
