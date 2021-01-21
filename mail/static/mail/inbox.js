@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
   // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
@@ -11,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function load_mailbox(mailbox) {
-  
   // Show the mailbox and hide other views
   document.querySelector('#mailbox-view').style.display = 'flex';
   document.querySelector('#compose-view').style.display = 'none';
@@ -191,7 +189,12 @@ function load_email(id){
       compose_email()
       // Prefill composition fields
       document.querySelector('#compose-recipients').value = email.sender;
-      document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
+      if (email.subject.substring(0,3) == 'Re:'){
+        document.querySelector('#compose-subject').value = email.subject
+      }
+      else{
+        document.querySelector('#compose-subject').value = `Re: ${email.subject}`
+      }
       document.querySelector('#compose-body').value = 
       `
        \t----------------------------------------------------
