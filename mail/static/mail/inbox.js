@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
+// **************************************************************
+// funtion: load_mailbox
+// purpose: show each mailbox view
+// **************************************************************
 function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#mailbox-view').style.display = 'flex';
@@ -23,6 +27,7 @@ function load_mailbox(mailbox) {
   fetch(`/emails/${mailbox}`)
   //Then, get the response and convert it to jason
   .then(response => response.json())
+
   //Then, build html with data
   .then(emails => {
     // Traverse the json object gotten from the response
@@ -30,45 +35,44 @@ function load_mailbox(mailbox) {
       //For each email create a col div
       const mail_div = document.createElement('div');
       mail_div.dataset.id = emails[i].id;
+
+      //Create subcolums for email details
+      //Create subcolum for recipient or sender
       if (mailbox == 'sent'){
-        // Set a class to the col
         mail_div.className = 'mail-div col-12 unread d-flex align-items-center'
-        //Create subcolum for recipient
         const col_recipient = document.createElement('div');
         col_recipient.className = 'col-md-3'
         col_recipient.innerHTML = `To : ${emails[i].recipients}`;
         mail_div.append(col_recipient);
       }
       else{
-        // Set a class to the col
         if (emails[i].read) {
           mail_div.className = 'mail-div col-12 read d-flex align-items-center'
         }
         else {
           mail_div.className = 'mail-div col-12 unread d-flex align-items-center'
         }
-        //Create subcolumn for sender
         const col_sender = document.createElement('div');
         col_sender.className = 'col-md-3'
         col_sender.innerHTML = emails[i].sender;
         mail_div.append(col_sender);
       }
-
-      //Create subcolums for subject and timestamp
+      //Create subcolum for subject
       const col_subject = document.createElement('div');
       col_subject.className = 'col-md-6 col-subject'
       col_subject.innerHTML = emails[i].subject;
       mail_div.append(col_subject);
-
+      //Create subcolum for timestamp
       const col_timestamp = document.createElement('div');
       col_timestamp.className = 'col-md-3 d-flex justify-content-end'
       col_timestamp.innerHTML = emails[i].timestamp;
       mail_div.append(col_timestamp)
-      
-      //Append div to parent div
+
+      //Append mail div to the mailbox view div
       document.querySelector('#mailbox-view').append(mail_div);
     }
   })
+
   // Then, listen for a click on each email col
   .then( () => {
     document.querySelectorAll('.mail-div').forEach(div => {
@@ -91,6 +95,10 @@ function load_mailbox(mailbox) {
   })
 }
 
+// **************************************************************
+// funtion: compose_email
+// purpose: show composition form view
+// **************************************************************
 function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#mailbox-view').style.display = 'none';
@@ -123,13 +131,19 @@ function compose_email() {
           // Print result
           console.log(result);
       });
+
     // Load inbox again
     load_mailbox('inbox');
+
     // Stop form from submitting
     return false;
   }
 }
 
+// **************************************************************
+// funtion: load_email
+// purpose: show the email view
+// **************************************************************
 function load_email(id){
   console.log(`Loading email with id ${id}`)
   // Show the mailbox and hide other views
@@ -141,11 +155,13 @@ function load_email(id){
   fetch(`/emails/${id}`)
   //Then, get the response and convert it to jason
   .then(response => response.json())
+
   //Then, build html with data
   .then(data => {
     //Log the data to console and store it in a variable for use of the parent function
     console.log(data);
-    email = data;
+    const email = data;
+
     //Build the html
     document.querySelector('#email-title').innerHTML = `<h4>${email.subject}</h4>`;
     document.querySelector('#email-sender').innerHTML = `From: ${email.sender}`;
@@ -181,15 +197,17 @@ function load_email(id){
       reply_btn.style.display='none'
     }
   })
+
   // Then, listen for a click on each button
   .then( () => {
     //Event listener for the archive or markasread button
     document.querySelectorAll('.opt-btn').forEach(button => {
       button.onclick = () => {
         //Mark the email
-        markEmail(id, button);
+        mark_email(id, button);
       }
     })
+
     //Event listener for the reply button
     document.querySelector('#reply-btn').onclick = () => {
       //Call function to show email composition form
@@ -208,35 +226,39 @@ function load_email(id){
        \tOn ${email.timestamp} ${email.sender} wrote:
        \t${email.body}`;
     }
-
   })
 }
 
-function markEmail(id, button){
+// **************************************************************
+// funtion: mark_email
+// purpose: Mark an email as archived, unarchived, read, not read
+// **************************************************************
+function mark_email(id, button){
   //Get the setting that is being modified
   let setting
   switch (button.value) {
     case 'Mark as Unread':
-        setting = JSON.stringify({
-            read: false
-            })
+      setting = JSON.stringify({
+        read: false
+        })
       break;
     case 'Mark as Read':
-        setting = JSON.stringify({
-            read: true
-            })
+      setting = JSON.stringify({
+        read: true
+        })
       break;
     case 'Unarchive':
-        setting = JSON.stringify({
-            archived: false
-            })
+      setting = JSON.stringify({
+        archived: false
+        })
       break;
     case 'Archive':
-        setting = JSON.stringify({
-            archived: true
-            })
+      setting = JSON.stringify({
+        archived: true
+        })
       break;
   }
+
   //Fetch server with PUT request passing the setting as body
   fetch(`/emails/${id}`, {
     method: 'PUT',
@@ -246,6 +268,7 @@ function markEmail(id, button){
   .then (response => {
     console.log(response)
   })
+
   //Then, load the user's mailbox once again
   .then ( () => load_mailbox('inbox') )
 }
