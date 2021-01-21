@@ -152,10 +152,13 @@ function load_email(id){
     document.querySelector('#email-recipients').innerHTML = `To: ${email.recipients}`;
     document.querySelector('#email-timestamp').innerHTML = email.timestamp;
     document.querySelector('#email-body').innerHTML = email.body;
+    //Get the buttons elements
     archive_btn = document.querySelector('#archive-btn');
     read_btn = document.querySelector('#read-btn');
     reply_btn = document.querySelector('#reply-btn');
+    //Get who the user is
     const user = JSON.parse(document.getElementById('user').textContent);
+    //Show the buttons if user is the sender
     if (user != email.sender) {
       if (email.read) {
         read_btn.value = 'Mark as Unread';
@@ -180,12 +183,16 @@ function load_email(id){
   })
   // Then, listen for a click on each button
   .then( () => {
+    //Event listener for the archive or markasread button
     document.querySelectorAll('.opt-btn').forEach(button => {
       button.onclick = () => {
+        //Mark the email
         markEmail(id, button);
       }
     })
+    //Event listener for the reply button
     document.querySelector('#reply-btn').onclick = () => {
+      //Call function to show email composition form
       compose_email()
       // Prefill composition fields
       document.querySelector('#compose-recipients').value = email.sender;
@@ -206,54 +213,39 @@ function load_email(id){
 }
 
 function markEmail(id, button){
+  //Get the setting that is being modified
+  let setting
   switch (button.value) {
     case 'Mark as Unread':
-      fetch(`/emails/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          read: false
-        })
-      })
-      .then (response => {
-        console.log(response)
-      })
-      .then ( () => load_mailbox('inbox') )
+        setting = JSON.stringify({
+            read: false
+            })
       break;
     case 'Mark as Read':
-      fetch(`/emails/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          read: true
-        })
-      })
-      .then (response => {
-        console.log(response)
-      })
-      .then ( () => load_mailbox('inbox') )
+        setting = JSON.stringify({
+            read: true
+            })
       break;
     case 'Unarchive':
-      fetch(`/emails/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          archived: false
-        })
-      })
-      .then (response => {
-        console.log(response)
-      })
-      .then ( () => load_mailbox('inbox') )
+        setting = JSON.stringify({
+            archived: false
+            })
       break;
     case 'Archive':
-      fetch(`/emails/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          archived: true
-        })
-      })
-      .then (response => {
-        console.log(response)
-      })
-      .then ( () => load_mailbox('inbox') )
+        setting = JSON.stringify({
+            archived: true
+            })
       break;
   }
+  //Fetch server with PUT request passing the setting as body
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: setting,
+  })
+  //Then, get the response and log it to console
+  .then (response => {
+    console.log(response)
+  })
+  //Then, load the user's mailbox once again
+  .then ( () => load_mailbox('inbox') )
 }
