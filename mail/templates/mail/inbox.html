@@ -11,20 +11,24 @@
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
     <hr>
 
-    <div id="mailbox-view">
+    <div id="mailbox-view" class="row">
     </div>
 
     <div id="email-view" class="row">
-        <div class="col-12" id = email-title></div>
-        <div class="col-12" id="email-options">
-            <button class="opt-btn" id="archive-btn"></button>
-            <button class="opt-btn" id="read-btn"></button>
+        <div class="col-lg-9" id = email-title></div>
+        <div class="col-lg-3" id="email-options">
+            <button class="opt-btn btn" id="archive-btn"></button>
+            <button class="opt-btn btn" id="read-btn"></button>
         </div>
-        <div class="col-12" id = "email-sender"></div>
-        <div class="col-12" id = email-recipients></div>
-        <div class="col-12" id = email-timestamp></div>
+        <div class="col-12" id="email-details-wrapper">
+            <div class="col-12" id = "email-sender"></div>
+            <div class="col-12" id = email-recipients></div>
+            <div class="col-12" id = email-timestamp></div>
+        </div>
         <div class="col-12" id = email-body></div>
-        <button id="reply-btn">Reply</button>
+        <div class="col-12" id = email-reply>
+            <button id="reply-btn" class="btn btn-primary"><span>Reply </span></button>
+        </div>
     </div>
 
     <div id="compose-view">

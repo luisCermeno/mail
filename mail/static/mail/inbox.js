@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
-  document.querySelector('#mailbox-view').style.display = 'block';
+  document.querySelector('#mailbox-view').style.display = 'flex';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#email-view').style.display = 'none';
 
@@ -27,11 +27,6 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   //Then, build html with data
   .then(emails => {
-    //Create a row wrapper for all emails
-    const wrapper = document.createElement('div');
-    wrapper.id = 'wrapper';
-    wrapper.className = 'row';
-    document.querySelector('#mailbox-view').append(wrapper);
     // Traverse the json object gotten from the response
     for (i = 0; i < emails.length; i++) {
       //For each email create a col div
@@ -42,7 +37,7 @@ function load_mailbox(mailbox) {
         mail_div.className = 'mail-div col-12 unread d-flex align-items-center'
         //Create subcolum for recipient
         const col_recipient = document.createElement('div');
-        col_recipient.className = 'col-md-4 d-flex align-items-center'
+        col_recipient.className = 'col-md-3'
         col_recipient.innerHTML = `To : ${emails[i].recipients}`;
         mail_div.append(col_recipient);
       }
@@ -56,24 +51,24 @@ function load_mailbox(mailbox) {
         }
         //Create subcolumn for sender
         const col_sender = document.createElement('div');
-        col_sender.className = 'col-md-4 d-flex align-items-center'
+        col_sender.className = 'col-md-3'
         col_sender.innerHTML = emails[i].sender;
         mail_div.append(col_sender);
       }
 
       //Create subcolums for subject and timestamp
       const col_subject = document.createElement('div');
-      col_subject.className = 'col-md-4 d-flex align-items-center'
+      col_subject.className = 'col-md-6 col-subject'
       col_subject.innerHTML = emails[i].subject;
       mail_div.append(col_subject);
 
       const col_timestamp = document.createElement('div');
-      col_timestamp.className = 'col-md-4 d-flex align-items-center justify-content-end'
+      col_timestamp.className = 'col-md-3 d-flex justify-content-end'
       col_timestamp.innerHTML = emails[i].timestamp;
       mail_div.append(col_timestamp)
       
       //Append div to parent div
-      document.querySelector('#wrapper').append(mail_div);
+      document.querySelector('#mailbox-view').append(mail_div);
     }
   })
   // Then, listen for a click on each email col
@@ -142,7 +137,7 @@ function load_email(id){
   // Show the mailbox and hide other views
   document.querySelector('#mailbox-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
-  document.querySelector('#email-view').style.display = 'block';
+  document.querySelector('#email-view').style.display = 'flex';
 
   //Fetch from API
   fetch(`/emails/${id}`)
@@ -154,13 +149,14 @@ function load_email(id){
     console.log(data);
     email = data;
     //Build the html
-    document.querySelector('#email-title').innerHTML = `<h3>${email.subject}</h3>`;
+    document.querySelector('#email-title').innerHTML = `<h4>${email.subject}</h4>`;
     document.querySelector('#email-sender').innerHTML = `From: ${email.sender}`;
     document.querySelector('#email-recipients').innerHTML = `To: ${email.recipients}`;
     document.querySelector('#email-timestamp').innerHTML = email.timestamp;
     document.querySelector('#email-body').innerHTML = email.body;
     archive_btn = document.querySelector('#archive-btn');
     read_btn = document.querySelector('#read-btn');
+    reply_btn = document.querySelector('#reply-btn');
     const user = JSON.parse(document.getElementById('user').textContent);
     if (user != email.sender) {
       if (email.read) {
@@ -181,6 +177,7 @@ function load_email(id){
     else {
       read_btn.style.display='none'
       archive_btn.style.display='none'
+      reply_btn.style.display='none'
     }
   })
   // Then, listen for a click on each button

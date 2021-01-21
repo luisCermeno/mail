@@ -2,15 +2,98 @@ textarea {
     min-height: 400px;
 }
 
-/* mail div */
+/* mailbox div */
+#mailbox-view{
+    border-bottom: solid 1px;
+    border-color: #DCDCDC;
+}
 .mail-div{
-    border: solid 1px;
-    border-color: gray;
-    height: 35px;
+    border-top: solid 1px;
+    border-color: #DCDCDC;
+    height: 45px;
+}
+.mail-div:hover{
+    cursor: pointer;
+    border: 1px #BEBEBE;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.2), 
+    0 0 0 1px rgba(0,0,0,0.08);
+}
+.mail-div > div{
+    height: 24px;
+    text-overflow: ellipsis;
+    overflow:  hidden;
+    white-space: nowrap; 
 }
 .read {
-    background-color: gray;
+    background-color: #DCDCDC;
 }
 .unread {
-    background-color: white;
+    background-color: #f5f5f5;
+}
+
+/* email div */
+.opt-btn{
+    transition-duration: 0.4s;
+    background-color: #F5F5F5;
+    border: solid 1px #E8E8E8;
+}
+/* archive-btn */
+#archive-btn{
+    background-color: #4CAF50;
+    border: solid 1px #4CAF50;
+    color: white
+}
+#archive-btn:hover{
+    background-color: white; 
+    color: black;
+}
+
+/* read btn */
+#read-btn{
+    background-color: #DCDCDC;
+    border: solid 1px #DCDCDC;
+    color: black
+}
+#read-btn:hover{
+    background-color: white; 
+    color: black;
+}
+
+/* reply-btn */
+#reply-btn {
+    transition: all 0.5s;
+}
+#reply-btn span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+#reply-btn span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+#reply-btn:hover span {
+    padding-right: 25px;
+}
+
+#reply-btn:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+/* email content */
+#email-title{
+    padding-bottom: 20px;
+}
+#email-details-wrapper{
+    padding-bottom: 20px;
+}
+
+#email-body{
+    padding-bottom: 20px;
+    white-space: pre-wrap;
 }
