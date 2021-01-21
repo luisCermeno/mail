@@ -99,7 +99,6 @@ function load_mailbox(mailbox) {
 }
 
 function compose_email() {
-
   // Show compose view and hide other views
   document.querySelector('#mailbox-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
@@ -150,10 +149,13 @@ function load_email(id){
   //Then, get the response and convert it to jason
   .then(response => response.json())
   //Then, build html with data
-  .then(email => {
-    console.log(email);
+  .then(data => {
+    //Log the data to console and store it in a variable for use of the parent function
+    console.log(data);
+    email = data;
+    //Build the html
     document.querySelector('#email-title').innerHTML = `<h3>${email.subject}</h3>`;
-    document.querySelector('#email-sender').innerHTML = `From: ${email.recipients}`;
+    document.querySelector('#email-sender').innerHTML = `From: ${email.sender}`;
     document.querySelector('#email-recipients').innerHTML = `To: ${email.recipients}`;
     document.querySelector('#email-timestamp').innerHTML = email.timestamp;
     document.querySelector('#email-body').innerHTML = email.body;
@@ -188,6 +190,18 @@ function load_email(id){
         markEmail(id, button);
       }
     })
+    document.querySelector('#reply-btn').onclick = () => {
+      compose_email()
+      // Prefill composition fields
+      document.querySelector('#compose-recipients').value = email.sender;
+      document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
+      document.querySelector('#compose-body').value = 
+      `
+       \t----------------------------------------------------
+       \tOn ${email.timestamp} ${email.sender} wrote:
+       \t${email.body}`;
+    }
+
   })
 }
 
