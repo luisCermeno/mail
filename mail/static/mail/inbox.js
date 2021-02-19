@@ -176,6 +176,9 @@ function load_email(id){
     const user = JSON.parse(document.getElementById('user').textContent);
     //Show the buttons if user is the sender
     if (user != email.sender) {
+      read_btn.style.display='inline-block'
+      archive_btn.style.display='inline-block'
+      reply_btn.style.display='inline-block'
       if (email.read) {
         read_btn.value = 'Mark as Unread';
       }
