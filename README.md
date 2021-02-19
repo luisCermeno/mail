@@ -1,4 +1,4 @@
-# Project 2 "Mail"
+# Project 3 "Mail"
 Author: Luis Cermeno
 Project3 for **Harvard's CS50**
 
