@@ -159,7 +159,6 @@ function load_email(id){
   //Then, build html with data
   .then(data => {
     //Log the data to console and store it in a variable for use of the parent function
-    console.log(data);
     const email = data;
 
     //Build the html
@@ -199,10 +198,6 @@ function load_email(id){
       archive_btn.style.display='none'
       reply_btn.style.display='none'
     }
-  })
-
-  // Then, listen for a click on each button
-  .then( () => {
     //Event listener for the archive or markasread button
     document.querySelectorAll('.opt-btn').forEach(button => {
       button.onclick = () => {
@@ -216,6 +211,7 @@ function load_email(id){
       //Call function to show email composition form
       compose_email()
       // Prefill composition fields
+
       document.querySelector('#compose-recipients').value = email.sender;
       if (email.subject.substring(0,3) == 'Re:'){
         document.querySelector('#compose-subject').value = email.subject
